@@ -31,6 +31,9 @@ def to_kanji_number(num):
     kanji_numbers = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
     return ''.join(kanji_numbers[int(d)] for d in str(num))
 
+def to_kanji_year(year):
+    return to_kanji_number(year)
+
 def to_kanji_month(month):
     return ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'][month - 1]
 
@@ -44,10 +47,11 @@ def to_kanji_day(day):
 
 def format_japanese_date_with_day(yyyymmdd):
     dt = datetime.strptime(yyyymmdd, '%Y%m%d')
-    month = int(yyyymmdd[4:6])
-    day = int(yyyymmdd[6:8])
+    year = to_kanji_year(yyyymmdd[:4])
+    month = to_kanji_month(int(yyyymmdd[4:6]))
+    day = to_kanji_day(int(yyyymmdd[6:8]))
     dow = '月火水木金土日'[dt.weekday()]
-    return f"{to_kanji_month(month)}{to_kanji_day(day)}（{dow}）"
+    return f"{year}年{month}{day}（{dow}）"
 
 def random_pastel_color():
     r = random.randint(180, 255)
@@ -55,12 +59,12 @@ def random_pastel_color():
     b = random.randint(180, 255)
     return f"rgb({r},{g},{b})"
 
-def generate_svg(date, content, width=328, height=140):
+def generate_svg(date, content, width=300, height=128):
     kanji_date = format_japanese_date_with_day(date)
     bg_color = random_pastel_color()
-    date_font_size = 14
-    content_font_size = 14
-    content_width = width - 40
+    date_font_size = 12
+    content_font_size = 13
+    content_width = width - 30
     svg_content = f"""<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="{bg_color}" />
         <style>
@@ -80,12 +84,13 @@ def generate_svg(date, content, width=328, height=140):
                 width: {content_width}px;
                 word-wrap: break-word;
                 white-space: pre-wrap;
+                line-height: 1.4;
             }}
         </style>
-        <foreignObject x="20" y="15" width="{content_width}" height="{height-30}">
+        <foreignObject x="15" y="10" width="{content_width}" height="{height-25}">
             <div xmlns="http://www.w3.org/1999/xhtml" class="content">{content}</div>
         </foreignObject>
-        <text x="{width-20}" y="{height-10}" class="date">{kanji_date}</text>
+        <text x="{width-10}" y="{height-5}" class="date">{kanji_date}</text>
     </svg>"""
     return svg_content
 
