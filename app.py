@@ -71,7 +71,7 @@ def generate_svg(date, content, width=300, height=128):
             .date {{
                 font-family: 'Hiragino Mincho Pro', 'Yu Mincho', serif;
                 font-size: {date_font_size}px;
-                fill: #333333;
+                fill: rgba(51, 51, 51, 0.6);
                 text-anchor: end;
             }}
             foreignObject {{
