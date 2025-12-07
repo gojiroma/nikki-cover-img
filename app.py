@@ -55,11 +55,11 @@ def random_pastel_color():
     b = random.randint(180, 255)
     return f"rgb({r},{g},{b})"
 
-def generate_svg(date, content, width=270, height=180):
+def generate_svg(date, content, width=328, height=140):
     kanji_date = format_japanese_date_with_day(date)
     bg_color = random_pastel_color()
-    date_font_size = 24
-    content_font_size = 18
+    date_font_size = 14
+    content_font_size = 14
     content_width = width - 40
     svg_content = f"""<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="{bg_color}" />
@@ -67,9 +67,8 @@ def generate_svg(date, content, width=270, height=180):
             .date {{
                 font-family: 'Hiragino Mincho Pro', 'Yu Mincho', serif;
                 font-size: {date_font_size}px;
-                font-weight: bold;
                 fill: #333333;
-                text-anchor: middle;
+                text-anchor: end;
             }}
             foreignObject {{
                 overflow: visible;
@@ -81,13 +80,12 @@ def generate_svg(date, content, width=270, height=180):
                 width: {content_width}px;
                 word-wrap: break-word;
                 white-space: pre-wrap;
-                margin-bottom: 20px;
             }}
         </style>
-        <text x="{width/2}" y="40" class="date">{kanji_date}</text>
-        <foreignObject x="20" y="70" width="{content_width}" height="{height-100}">
+        <foreignObject x="20" y="15" width="{content_width}" height="{height-30}">
             <div xmlns="http://www.w3.org/1999/xhtml" class="content">{content}</div>
         </foreignObject>
+        <text x="{width-20}" y="{height-10}" class="date">{kanji_date}</text>
     </svg>"""
     return svg_content
 
