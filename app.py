@@ -38,11 +38,16 @@ def to_kanji_month(month):
     return ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'][month - 1]
 
 def to_kanji_day(day):
-    if day in {10, 20, 30}: return {10:'十日', 20:'二十日', 30:'三十日'}[day]
-    if day == 31: return '三十一日'
-    if day < 10: return to_kanji_number(day) + '日'
-    if day < 20: return '十' + to_kanji_number(day - 10) + '日'
-    if day < 30: return '二十' + to_kanji_number(day - 20) + '日'
+    if day in {10, 20, 30}:
+        return {10:'十日', 20:'二十日', 30:'三十日'}[day]
+    if day == 31:
+        return '三十一日'
+    if day < 10:
+        return to_kanji_number(day) + '日'
+    if day < 20:
+        return '十' + to_kanji_number(day - 10) + '日'
+    if day < 30:
+        return '二十' + to_kanji_number(day - 20) + '日'
     return to_kanji_number(day) + '日'
 
 def format_japanese_date_with_day(yyyymmdd):
@@ -64,15 +69,23 @@ def generate_svg(date, content, width=358, height=128):
     bg_color = random_pastel_color()
     date_font_size = 12
     content_font_size = 13
+    content_height = height - 30
     content_width = width - 30
+
     svg_content = f"""<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg">
         <rect width="100%" height="100%" fill="{bg_color}" />
         <style>
             .date {{
                 font-family: 'Hiragino Mincho Pro', 'Yu Mincho', serif;
                 font-size: {date_font_size}px;
-                fill: rgba(51, 51, 51, 0.6);
+                fill: #333333;
                 text-anchor: end;
+                font-weight: bold;
+                letter-spacing: 2px;
+                dominant-baseline: middle;
+            }}
+            .date-bg {{
+                fill: rgba(255, 255, 255, 0.9);
             }}
             foreignObject {{
                 overflow: visible;
@@ -87,10 +100,11 @@ def generate_svg(date, content, width=358, height=128):
                 line-height: 1.4;
             }}
         </style>
-        <foreignObject x="15" y="10" width="{content_width}" height="{height-25}">
+        <foreignObject x="15" y="10" width="{content_width}" height="{content_height}">
             <div xmlns="http://www.w3.org/1999/xhtml" class="content">{content}</div>
         </foreignObject>
-        <text x="{width-10}" y="{height-5}" class="date">{kanji_date}</text>
+        <rect x="0" y="{height - 25}" width="{width}" height="25" class="date-bg" />
+        <text x="{width - 10}" y="{height - 12}" class="date">{kanji_date}</text>
     </svg>"""
     return svg_content
 
@@ -99,13 +113,11 @@ def diary_svg(yyyymmdd):
     entry_md_url = "https://nikki.poet.blue/entry.md"
     markdown_content = fetch_entry_md(entry_md_url)
     entries = parse_entries(markdown_content)
-
     for entry in entries:
         if entry['date'] == yyyymmdd:
             svg = generate_svg(entry['date'], entry['content'])
             svg_io = BytesIO(svg.encode('utf-8'))
             return send_file(svg_io, mimetype='image/svg+xml', as_attachment=False)
-
     return "Entry not found", 404
 
 if __name__ == '__main__':
