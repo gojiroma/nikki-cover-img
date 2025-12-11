@@ -59,7 +59,7 @@ def random_pastel_color():
     b = random.randint(180, 255)
     return f"rgb({r},{g},{b})"
 
-def generate_svg(date, content, width=300, height=128):
+def generate_svg(date, content, width=358, height=128):
     kanji_date = format_japanese_date_with_day(date)
     bg_color = random_pastel_color()
     date_font_size = 12
